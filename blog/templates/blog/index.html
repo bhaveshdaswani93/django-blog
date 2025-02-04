@@ -11,12 +11,6 @@ My Blog
 {% endblock %}
 
 {% block content %}
-<header id="main-navigation">
-  <h1><a href="">Max' Blog</a></h1>
-  <nav>
-    <a href="">All Posts</a>
-  </nav>
-</header>
 
 <section id="welcome">
   <header>
@@ -30,7 +24,9 @@ My Blog
   <h2>My Latest Thoughts</h2>
 
   <ul>
+    {% for post in posts %}
     {% include 'blog/includes/post.html' %}
+    {% endfor %}
   </ul>
 </section>
 
