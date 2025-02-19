@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from datetime import date
 from django.http import Http404
+from .models import Post
 
 posts_list = [
     {
@@ -73,25 +74,32 @@ def get_sort_key(post):
   return post['date']
 
 def index(request):
-  print(posts_list)
-  latest_posts = sorted(posts_list, key=get_sort_key, reverse=True)
-  latest_posts = list(latest_posts[:3])
+  #print(posts_list)
+  latest_posts = Post.objects.all().order_by('-date')[:3]
+  #latest_posts = sorted(posts_list, key=get_sort_key, reverse=True)
+  #latest_posts = list(latest_posts[:3])
 
   return render(request, 'blog/index.html', {
     'posts': latest_posts
   })
 
 def posts(request):
+  posts_list = Post.objects.all().order_by("-date")
   return render(request, 'blog/all-posts.html', {
     'posts': posts_list
   })
 
 def post_detail(request, slug):
-  try: 
-    print(list(post for post in posts_list if post['slug'] == slug))
-    post = next(post for post in posts_list if post['slug'] == slug)
-    return render(request, 'blog/post-detail.html', {
+  post = get_object_or_404(Post, slug=slug)
+  
+  return render(request, 'blog/post-detail.html', {
       'post': post
     })
-  except:
-    raise Http404()
+  #try: 
+    #print(list(post for post in posts_list if post['slug'] == slug))
+   # post = next(post for post in posts_list if post['slug'] == slug)
+   
+  # post = Post.objects.get(slug=slug)
+  
+  #except:
+    #raise Http404()
