@@ -4,10 +4,16 @@ from django.http import Http404
 from .models import Post
 from django.views.generic import ListView
 
-def StartPageListView(ListView):
+class StartPageListView(ListView):
   template_name = "blog/index.html"
   model = Post
   context_object_name = "posts"
+
+  ordering = ['-date']
+
+  def get_queryset(self):
+    queryset = super().get_queryset()
+    return queryset[:3]
 
 # Create your views here.
 def get_sort_key(post):
