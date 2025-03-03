@@ -2,6 +2,12 @@ from django.shortcuts import render, get_object_or_404
 from datetime import date
 from django.http import Http404
 from .models import Post
+from django.views.generic import ListView
+
+def StartPageListView(ListView):
+  template_name = "blog/index.html"
+  model = Post
+  context_object_name = "posts"
 
 # Create your views here.
 def get_sort_key(post):
