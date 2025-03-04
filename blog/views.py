@@ -3,6 +3,8 @@ from datetime import date
 from django.http import Http404
 from .models import Post
 from django.views.generic import ListView, DetailView
+from django.views import View
+from django.shortcuts import redirect
 from .forms import CommentForm
 
 class StartPageListView(ListView):
@@ -43,14 +45,37 @@ def posts(request):
     'posts': posts_list
   })
   
-class SinglePostDetailView(DetailView):
-  template_name = "blog/post-detail.html"
-  model = Post
-  def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['post_tags'] = self.object.tags.all()
-        context['comment_form'] = CommentForm
-        return context
+# class SinglePostDetailView(DetailView):
+#   template_name = "blog/post-detail.html"
+#   model = Post
+#   def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['post_tags'] = self.object.tags.all()
+#         context['comment_form'] = CommentForm()
+#         return context
+
+class SinglePostDetailView(View):
+  def get(self, request, slug):
+    post = get_object_or_404(Post, slug=slug)
+    return render(request, 'blog/post-detail.html', {
+      'post': post,
+      'post_tags': post.tags.all(),
+      'comment_form': CommentForm()
+    })
+  
+  def post(self, request, slug):
+    post = get_object_or_404(Post, slug=slug)
+    comment_form = CommentForm(request.POST)
+    if comment_form.is_valid():
+      comment = comment_form.save(commit=False)
+      comment.post = post
+      comment.save()
+      return redirect('post-detail-page', slug=slug)
+    return render(request, 'blog/post-detail.html', {
+      'post': post,
+      'post_tags': post.tags.all(),
+      'comment_form': comment_form
+    })
   
 
 def post_detail(request, slug):
