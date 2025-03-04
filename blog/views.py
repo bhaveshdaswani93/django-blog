@@ -2,7 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from datetime import date
 from django.http import Http404
 from .models import Post
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
+from .forms import CommentForm
 
 class StartPageListView(ListView):
   template_name = "blog/index.html"
@@ -28,12 +29,29 @@ def index(request):
   return render(request, 'blog/index.html', {
     'posts': latest_posts
   })
+  
+class AllPostView(ListView):
+  template_name = "blog/all-posts.html"
+  model = Post
+  context_object_name = "posts"
+  ordering = ['-date']
+  
 
 def posts(request):
   posts_list = Post.objects.all().order_by("-date")
   return render(request, 'blog/all-posts.html', {
     'posts': posts_list
   })
+  
+class SinglePostDetailView(DetailView):
+  template_name = "blog/post-detail.html"
+  model = Post
+  def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['post_tags'] = self.object.tags.all()
+        context['comment_form'] = CommentForm
+        return context
+  
 
 def post_detail(request, slug):
   post = get_object_or_404(Post, slug=slug)
