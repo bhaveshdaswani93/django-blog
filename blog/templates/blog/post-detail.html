@@ -11,6 +11,11 @@
 
 {% block content %}
 {% if comment_form.errors %}
+  <div id="alert">
+    <h2>Saving Comment Failed</h2>
+    <p>Check the comment form below the post and fix the errors</p>
+    <a href="#comment-form">Go to Comment Form</a>
+  </div>
 {% endif %}
 <section id="summary">
   <h2>{{ post.title }}</h2>
@@ -28,7 +33,7 @@
   {{ post.content|linebreaks }}
   
 </main>
-<section>
+<section id="comments">
   <ul>
    {% for comment in comments %}
      <li>
