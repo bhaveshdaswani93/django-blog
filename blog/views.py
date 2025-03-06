@@ -90,19 +90,34 @@ def post_detail(request, slug):
     })
     
 class ReadLaterView(View):
+  def get(self, request):
+    read_later_post_ids = request.session.get('read_later_post_ids')
+    has_posts = True
+    
+    if read_later_post_ids is None:
+      read_later_post_ids = []
+      has_posts = False
+      
+    posts = Post.objects.filter(id__in=read_later_post_ids)
+    
+    return render(request, 'blog/read-later-posts.html', {
+      'posts': posts,
+      'has_posts': has_posts
+    })
+
   def post(self, request):
     read_later_post_ids = request.session.get('read_later_post_ids')
     
-     if read_later_post_ids is None:
-       read_later_post_ids = []
-       
-      post_id = int(request.POST['post_id'])
+    if read_later_post_ids is None:
+      read_later_post_ids = []
       
-      if post_id not in read_later_post_ids:
-        read_later_post_ids.append(post_id)
-        request.session['read_later_post_ids'] = read_later_post_ids
+    post_id = int(request.POST['post_id'])
+    
+    if post_id not in read_later_post_ids:
+      read_later_post_ids.append(post_id)
+      request.session['read_later_post_ids'] = read_later_post_ids
       
-      return redirect('/')
+    return redirect('/')
       
   #try: 
     #print(list(post for post in posts_list if post['slug'] == slug))
