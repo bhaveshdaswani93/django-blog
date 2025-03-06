@@ -5,5 +5,6 @@ urlpatterns = [
   # path('', views.index, name='starting-page'),
   path('', views.StartPageListView.as_view(), name='starting-page'),
   path('posts', views.AllPostView.as_view(), name='post-list'),
-  path('posts/<slug:slug>', views.SinglePostDetailView.as_view(), name='post-detail-page')
+  path('posts/<slug:slug>', views.SinglePostDetailView.as_view(), name='post-detail-page'),
+  path('read-later', views.ReadLaterView.as_view(), name='read-later')
 ]
