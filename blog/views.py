@@ -55,13 +55,22 @@ def posts(request):
 #         return context
 
 class SinglePostDetailView(View):
+  def check_is_post_read_for_later(self, request, post_id):
+    is_post_read_for_later = False
+    read_later_post_ids= request.session['read_later_post_ids']
+    
+    if read_later_post_ids is not None and post_id in read_later_post_ids:
+      is_post_read_for_later= True
+    
+    return is_post_read_for_later
   def get(self, request, slug):
     post = get_object_or_404(Post, slug=slug)
     return render(request, 'blog/post-detail.html', {
       'post': post,
       'post_tags': post.tags.all(),
       'comment_form': CommentForm(),
-      'comments': post.comments.all().order_by('-id')
+      'comments': post.comments.all().order_by('-id'),
+      'is_post_read_for_later': self.check_is_post_read_for_later(request, post.id)
     })
   
   def post(self, request, slug):
@@ -77,7 +86,8 @@ class SinglePostDetailView(View):
       'post_tags': post.tags.all(),
       'comment_form': comment_form,
       
-      'comments': post.comments.all().order_by('-id')
+      'comments': post.comments.all().order_by('-id'),
+      'is_post_read_for_later': self.check_is_post_read_for_later(request, post.id)
     })
   
 
@@ -115,7 +125,10 @@ class ReadLaterView(View):
     
     if post_id not in read_later_post_ids:
       read_later_post_ids.append(post_id)
-      request.session['read_later_post_ids'] = read_later_post_ids
+      
+    else:
+      read_later_post_ids.remove(post_id)
+    request.session['read_later_post_ids'] = read_later_post_ids
       
     return redirect('/')
       
