@@ -104,10 +104,11 @@ class ReadLaterView(View):
     read_later_post_ids = request.session.get('read_later_post_ids')
     has_posts = True
     
-    if read_later_post_ids is None:
+    if read_later_post_ids is None or len(read_later_post_ids) == 0:
       read_later_post_ids = []
       has_posts = False
-      
+    
+    print(has_posts)
     posts = Post.objects.filter(id__in=read_later_post_ids)
     
     return render(request, 'blog/read-later-posts.html', {
