@@ -57,7 +57,7 @@ def posts(request):
 class SinglePostDetailView(View):
   def check_is_post_read_for_later(self, request, post_id):
     is_post_read_for_later = False
-    read_later_post_ids= request.session['read_later_post_ids']
+    read_later_post_ids= request.session.get('read_later_post_ids')
     
     if read_later_post_ids is not None and post_id in read_later_post_ids:
       is_post_read_for_later= True
