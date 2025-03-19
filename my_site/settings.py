@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from os import getenv
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -35,6 +39,7 @@ ALLOWED_HOSTS = [
 
 INSTALLED_APPS = [
     'blog',
+    'storages',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -152,3 +157,18 @@ AWS_STORAGE_BUCKET_NAME = "django-blog-2025"
 AWS_S3_REGION_NAME = "us-east-1"
 AWS_ACCESS_KEY_ID = "AKIA3QYBLE7PTU7ZYMXI"
 AWS_SECRET_ACCESS_KEY = getenv('AWS_SECRET_ACCESS_KEY')
+
+AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+
+# S3 Static Settings
+STORAGES = {
+   "default": {
+        "BACKEND" : "storages.backends.s3boto3.S3StaticStorage",
+    },
+
+    "staticfiles":  {
+        "BACKEND" : "storages.backends.s3boto3.S3StaticStorage",
+    },
+}
+STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
+
